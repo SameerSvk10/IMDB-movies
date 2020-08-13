@@ -1,0 +1,1 @@
+web: gunicorn imdbtask.wsgi --log-file -
