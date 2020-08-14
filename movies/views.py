@@ -33,7 +33,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """
     queryset = Movie.objects.all().order_by('imdb_score')
     serializer_class = MovieSerializer
-    authentication_classes = [BasicAuthentication]
+    authentication_classes = [TokenAuthentication]
     pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
@@ -55,8 +55,8 @@ class FindMovieView(APIView):
     serializer_class = MovieSerializer
 
     def get(self, request):
-        offset = request.query_params.get('offset', 0)
-        count = request.query_params.get('count', 20)
+        offset = int(request.query_params.get('offset', '0'))
+        count = int(request.query_params.get('count', '20'))
         queryset = Movie.objects.all()
         query = request.query_params.get('q', None)
         query_type = request.query_params.get('query_type', None)
@@ -76,7 +76,8 @@ class FindMovieView(APIView):
                                   "genres": "genre__name__icontains"}
                 queryset = queryset.filter(**{filter_mapping[query_type]: query})
         movies_serializer = self.serializer_class(queryset[offset:count], many=True)
-        return Response(movies_serializer.data)
+        result = movies_serializer.data
+        return Response(result) if result else Response("No results found, try different query")
 
 
 class AdvancedSearchView(APIView):

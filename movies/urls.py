@@ -10,7 +10,7 @@ from rest_framework.routers import DefaultRouter
 admin.autodiscover()
 # set up rest router, urls for CRUD operations
 router = DefaultRouter()
-router.register(r'', views.MovieViewSet)
+router.register(r'', views.MovieViewSet, basename='movies')
 
 urlpatterns = [
     path('', include(router.urls)),
